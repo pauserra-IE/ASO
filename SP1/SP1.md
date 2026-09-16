@@ -133,6 +133,51 @@ ACTIVITAT 2 SSH
 Instalem ssh
 <img width="857" height="911" alt="image" src="https://github.com/user-attachments/assets/fe2e9e62-6cb0-4220-908d-8e8b92148a8a" />
 
+L'habilitem
+<img width="859" height="359" alt="image" src="https://github.com/user-attachments/assets/e32bc40d-2c8e-4633-bd1d-d4e9c46aded3" />
+
+aquesta comanda ens diu el target graphical quines dependencies te:
+<img width="897" height="190" alt="image" src="https://github.com/user-attachments/assets/0ba425c5-644a-43ee-b89b-3fa2761eecbf" />
+
+<img width="870" height="860" alt="image" src="https://github.com/user-attachments/assets/67db002f-93df-4eb7-98b5-80c1492d80f7" />
+
+COMANDA systemd-analyze
+<img width="762" height="61" alt="image" src="https://github.com/user-attachments/assets/bd12ead6-4174-4b2b-b719-647e93d06dfd" />
+
+ACTIVITAT 3:
+Crear un .service
+
+El ficarem a un target
+Per a que quan s'engaguee el so. alli tenim permisos de root aixi que es podra explotar la vulnerabilitat.
+
+Demostració:
+
+Creem l'script:
+<img width="609" height="185" alt="image" src="https://github.com/user-attachments/assets/6d3738c5-98a4-4176-9335-ff9998e8507f" />
+
+I li donem permisos d'execució:
+<img width="411" height="45" alt="image" src="https://github.com/user-attachments/assets/4ac5f6b7-2e7d-4d9e-9637-38f765fc04ac" />
+
+Ara creem el .service
+<img width="646" height="329" alt="image" src="https://github.com/user-attachments/assets/5b317894-32c0-49f7-93e5-ad929c4d958d" />
+L'habilitem:
+
+<img width="897" height="636" alt="image" src="https://github.com/user-attachments/assets/85ad35d5-1b23-46d6-9d10-cb2ce080a148" />
+
+Fem un reboot i comprovem que hi hagi una "a" a /etc/pwd
+
+<img width="735" height="602" alt="image" src="https://github.com/user-attachments/assets/4b9793a5-72fb-4c20-96b8-dfc0b3a644c7" />
+
+
+ACTIVITAT 4:
+
+Fer un target amb el meu nom. Que depengui d'algu.
+
+el getdefault el canviarem al nostre . dintre tindra el .service que cridara un script amb permisos de root abans que s'inicie el SO
+
+Que fara l'script amb permisos de root? El que volguessem (keyloggers, connexions ssh, captures de pantalla del que esta veien l'usuari, etc. el que sigue )
+
+
 
 * 1.2- Quin el nostre SO?
 
