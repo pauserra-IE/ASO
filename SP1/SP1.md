@@ -18,6 +18,7 @@
 * 3.5- Modificar target definitiu
 * 3.6- Afegir/treure serveis target
 * 3.7- Creem nou target
+* 3.8- Creem nou servei
 
 ---
 
