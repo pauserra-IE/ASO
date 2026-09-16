@@ -23,6 +23,10 @@ title: "SISTEMES D'INICI"
 * 3.6- Afegir/treure serveis target
 * 3.7- Creem nou target
 * 3.8- Creem nou servei
+---
+
+
+<img width="1024" height="572" alt="image" src="https://github.com/user-attachments/assets/d6d2a5fa-8d2d-4d93-aa4a-6054b6f91b4d" />
 
 ---
 
@@ -50,3 +54,5 @@ title: "SISTEMES D'INICI"
 * `/etc/init.d/cron stop`
 * `service cron stop`
 * `systemctl stop cron`
+
+
