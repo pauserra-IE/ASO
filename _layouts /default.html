@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ page.title }}</title>
+  <link rel="stylesheet" href="{{ '/assetscss/custom.css' | relative_url }}">
+</head>
+<body>
+
+  <!-- Botó de "Tornar a l'inici" (pàgina principal) -->
+  <button onclick="window.location.href='https://pauserra-ie.github.io/ISOPJ1/'" id="goToHomeBtn" title="Tornar a l'inici">
+    🏠
+  </button>
+
+  <!-- Contingut de la pàgina -->
+  <h1>{{ page.title }}</h1>
+  {{ content }}
+
+ <!-- Botons a la part inferior dreta -->
+  <div id="scrollButtons">
+    <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" id="scrollUpBtn" title="Pujar">
+    ↑
+    </button>
+    <button onclick="window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })" id="scrollDownBtn" title="Baixar">
+    ↓
+    </button>
+  </div>
+
+
+  <!-- Peu de pàgina amb llicència -->
+  <footer class="license">
+    <a href="https://pauserra-ie.github.io/ISOPJ1/">ISOPJ1</a> © 2025 by 
+    <a href="https://github.com/pauserra-IE">Pau Serra Bertomeu</a> 
+    is licensed under 
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>
+    <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" class="license-icon">
+    <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" class="license-icon">
+    <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" class="license-icon">
+    <img src="https://mirrors.creativecommons.org/presskit/icons/sa.svg" alt="SA" class="license-icon">
+  </footer>
+
+</body>
+</html>
