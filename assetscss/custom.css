@@ -1,0 +1,143 @@
+/* Suaviza les línies horizontals */
+hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 20px 0;
+}
+
+/* Títols */
+h1, h2, h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+/* Títols específics */
+h1 {
+  font-size: 2.5em; /* 40px */
+}
+
+h2 {
+  font-size: 2em; /* 32px */
+}
+
+h3 {
+  font-size: 1.5em; /* 24px */
+}
+
+/* Enllaços */
+a {
+  color: #1a73e8;
+  text-decoration: none;
+  margin-bottom: 5px;
+  display: inline-block;
+  font-size: 1.05em;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Botons de desplaçament (amunt i avall) a la part inferior dreta */
+#scrollButtons {
+  position: fixed;
+  bottom: 20px; /* Espai des de la part inferior */
+  right: 20px;  /* Espai des de la part dreta */
+  display: flex;
+  flex-direction: column; /* Apilar els botons un sobre l'altre */
+  gap: 10px; /* Espai entre els botons */
+  z-index: 1000; /* Assegura que els botons siguin visibles sobre altres elements */
+}
+
+#scrollUpBtn, #scrollDownBtn {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 15px;
+  font-size: 1.5em;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: block;
+}
+
+#scrollUpBtn:hover, #scrollDownBtn:hover {
+  background-color: #0c59b3;
+}
+
+
+/* Estils generals */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.3;
+  padding: 0 15px;
+}
+
+li {
+  line-height: 1.2;
+}
+
+/* Botó de "Tornar a l'inici" */
+#goToHomeBtn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 15px;
+  font-size: 1.5em;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  z-index: 1000;
+}
+
+#goToHomeBtn:hover {
+  background-color: #0c59b3;
+}
+
+/* Millorar la separació entre text i les icones de llicència */
+footer .license {
+  margin-top: 20px;  /* Afegim marge superior per separar millor del text */
+}
+
+.license-icon {
+  max-width: 1.5em;  /* Una mica més grans per a una millor visibilitat */
+  max-height: 1.5em;
+  margin-left: 10px; /* Separar les icones unes de les altres */
+  margin-right: 10px; /* Afegir marge a la dreta de cada icona */
+  vertical-align: middle; /* Centra les icones amb el text */
+  display: inline-block; /* Assegura que estiguin en línia, no apilades */
+}
+
+/* Afegir marge entre les imatges de les llicències */
+footer .license img {
+  margin-right: 10px;  /* Afegir espai entre les icones */
+}
+
+
+/* Responsivitat per dispositius petits */
+@media (max-width: 600px) {
+  body {
+    padding: 0 10px;
+  }
+
+  /* Botons fixos ajustats per a mòbils */
+  #scrollButtons {
+    bottom: 10px;
+    left: 10px;
+  }
+
+  #goToHomeBtn {
+    top: 10px;
+    right: 10px;
+  }
+}
+
+/* Afegir espai entre les imatges i el text */
+img {
+  display: block;        /* Força que les imatges siguin blocs, no alineades amb el text */
+  margin: 20px 0;        /* Marge superior i inferior per separar de manera visual */
+  max-width: 100%;       /* Evita que les imatges surtin de la pàgina */
+  height: auto;          /* Manté la relació d'aspecte original */
+}
