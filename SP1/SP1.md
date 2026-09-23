@@ -26,11 +26,6 @@ title: "SISTEMES D'INICI"
 * 3.8- Creem nou target personalitzat
 ---
 
-o
-<img width="1024" height="572" alt="image" src="https://github.com/user-attachments/assets/d6d2a5fa-8d2d-4d93-aa4a-6054b6f91b4d" />
-
----
-
 ## Conceptes
 
 * **Kernel** -> gestiona processos
@@ -193,18 +188,18 @@ A simple vista com podem detectar-ho de base? Si fem un _reboot_, l'acció en l'
 
 ---
 
-* 3.8- Creem nou target personalitzat
 
-> ⚠️ **TASCA AVALUABLE — Activitat de deures** ⚠️
 
-# 🏠 TASCA AVALUABLE 4: Agent Silenciós de Vigilància amb Captura de Pantalla i Bot de Telegram
+# 🏠 TASCA AVALUABLE : Agent Silenciós de Vigilància amb Captura de Pantalla i Bot de Telegram
 
-> [!IMPORTANT]
-> Aquesta activitat **no s'ha fet a classe**: s'ha realitzat de forma autònoma com a tasca de deures avaluable. Les activitats 1, 2 i 3 corresponen al treball fet durant les sessions presencials.
 
-**Objectiu:** Crear un `target` propi que s'activi a l'arrencada del sistema gràfic i que executi un servei amb permisos de `root`. El servei capturarà automàticament la pantalla de l'usuari cada 30 segons amb `scrot` i enviarà les captures al nostre canal privat de Telegram mitjançant la seva API. Demostrarem així com un servei injectat en el cicle de boot pot actuar com un agent de monitoratge complet i silenciós.
+1. **Crear target propi, fer-lo default target i comprovar que accediu amb el vostre target**
+2. **Crear un servei dintre del vostre target i comprovar que s'inicia correctament al reiniciar**
+3. **Modificar el servei per a que execute un script amb permisos root**
+4. **Programar script amb el que vulgueu i executar-lo manualment per a veure si funciona**
 
-**(Nota general: Tots els passos es realitzen com a `root`. Fer `sudo su` per entrar a la sessió root abans de continuar.)**
+**Objectiu escollit:** Crear un `target` propi que s'activi a l'arrencada del sistema gràfic i que executi un servei amb permisos de `root`. El servei capturarà automàticament la pantalla de l'usuari cada 30 segons amb `scrot` i enviarà les captures al nostre canal privat de Telegram mitjançant la seva API. Demostrarem així com un servei injectat en el cicle de boot pot actuar com un agent de monitoratge complet i silenciós.
+
 
 ---
 
