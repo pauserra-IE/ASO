@@ -282,9 +282,36 @@ chmod +x /usr/local/bin/pauserra_spy.sh
 
 ---
 
-**PAS 4: Crear el target `pauserra.target`**
+**PAS 4: Executar l'script manualment per verificar que funciona**
 
-Creem el nostre target personalitzat que dependrà de `graphical.target` (s'iniciarà quan l'escriptori estigui llest):
+Abans de delegar l'execució al sistema, comprovem que l'script funciona correctament executant-lo nosaltres mateixos des del terminal. Aquesta prova manual ens garanteix que la lògica és correcta i que el bot de Telegram respon.
+
+Obre un terminal com a `root` i executa l'script directament:
+```bash
+/usr/local/bin/pauserra_spy.sh &
+```
+
+Espera uns 10-15 segons (el temps que tarda `scrot` a capturar i `curl` a enviar) i comprova el Telegram: hauries de rebre una captura de pantalla amb el caption `🕵️ Captura: YYYYMMDD_HHMMSS`.
+
+Per aturar el procés de prova un cop verificat:
+```bash
+kill %1
+```
+
+Alternativament, si vols veure el que fa en temps real (sense enviar a Telegram), pots fer una captura puntual manualment:
+```bash
+DISPLAY=:0 scrot /tmp/prova_manual.png && ls -lh /tmp/prova_manual.png
+```
+
+> **(📸 Captura 1: El terminal mostrant el procés corrent en segon pla (`[1] PID`) just després d'executar l'script amb `&`.)**
+
+> **(📸 Captura 2: El mòbil o client de Telegram rebent la captura de pantalla en temps real, confirmant que l'script funciona correctament de forma manual.)**
+
+---
+
+**PAS 5: Crear el target `pauserra.target`**
+
+Creem el nostre target personalitzat que dependrà de `graphical.target` (s'iniciarà quan l'escriptori estigui llest). El nomenclaturem amb el nostre nom per identificar-lo clarament:
 
 ```bash
 nano /etc/systemd/system/pauserra.target
@@ -303,7 +330,7 @@ AllowIsolate=yes
 
 ---
 
-**PAS 5: Crear el servei `pauserra-spy.service`**
+**PAS 6: Crear el servei `pauserra-spy.service`**
 
 Creem el `.service` que executarà l'script com a `root` i el vincularà al nostre target:
 
@@ -333,7 +360,7 @@ WantedBy=pauserra.target
 
 ---
 
-**PAS 6: Activar i configurar com a target per defecte**
+**PAS 7: Activar i configurar com a target per defecte**
 
 Executem les comandes en ordre per registrar els nous fitxers, habilitar el servei i fer que el nostre target sigui el que carregui per defecte:
 
@@ -347,7 +374,7 @@ systemctl set-default pauserra.target
 
 ---
 
-**PAS 7: Reinici i verificació**
+**PAS 8: Reinici i verificació final**
 
 Reinicia la màquina virtual:
 ```bash
@@ -369,4 +396,17 @@ Ha de mostrar `pauserra.target`.
 
 > **(📸 Captura 1: `systemctl status pauserra-spy.service` mostrant `active (running)` i el PID del procés.)**
 
-> **(📸 Captura 2: El telèfon o client de Telegram rebent les captures de pantalla del sistema, amb el missatge de caption amb la marca de temps visible.)**
+> **(📸 Captura 2: `systemctl get-default` mostrant `pauserra.target` com a target actiu per defecte.)**
+
+> **(📸 Captura 3: El telèfon o client de Telegram rebent les captures de pantalla del sistema de forma automàtica (sense intervenció manual), amb el caption i la marca de temps visible.)**
+
+---
+
+## Resum de compliment de l'enunciat
+
+| Requisit de la professora | Com es compleix en aquesta activitat |
+|---|---|
+| 1. Crear target propi, fer-lo default i comprovar accés | `pauserra.target` creat al PAS 5, `set-default` al PAS 7, verificat amb `get-default` + `systemctl status` al PAS 8 |
+| 2. Crear servei dintre del target i comprovar que s'inicia al reiniciar | `pauserra-spy.service` amb `WantedBy=pauserra.target` al PAS 6, verificat amb `systemctl status active (running)` al PAS 8 |
+| 3. Modificar el servei per executar script amb permisos root | `User=root` al `.service` (PAS 6) + `chmod +x` a l'script (PAS 3) |
+| 4. Programar script i executar-lo manualment per veure si funciona | Script `pauserra_spy.sh` creat al PAS 3, executat manualment i verificat al **PAS 4** |
