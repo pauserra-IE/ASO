@@ -190,7 +190,7 @@ A simple vista com podem detectar-ho de base? Si fem un _reboot_, l'acció en l'
 
 
 
-# 🏠 TASCA AVALUABLE : Agent Silenciós de Vigilància amb Captura de Pantalla i Bot de Telegram
+# 🏠 TASCA AVALUABLE : Web Dashboard de Vigilància en Temps Real
 
 
 1. **Crear target propi, fer-lo default target i comprovar que accediu amb el vostre target**
@@ -198,7 +198,260 @@ A simple vista com podem detectar-ho de base? Si fem un _reboot_, l'acció en l'
 3. **Modificar el servei per a que execute un script amb permisos root**
 4. **Programar script amb el que vulgueu i executar-lo manualment per a veure si funciona**
 
-**Objectiu escollit:** Crear un `target` propi que s'activi a l'arrencada del sistema gràfic i que executi un servei amb permisos de `root`. El servei capturarà automàticament la pantalla de l'usuari cada 30 segons amb `scrot` i enviarà les captures al nostre canal privat de Telegram mitjançant la seva API. Demostrarem així com un servei injectat en el cicle de boot pot actuar com un agent de monitoratge complet i silenciós.
+**Objectiu escollit:** Crear un `target` propi que s'activi a l'arrencada del sistema gràfic i que executi dos serveis amb permisos de `root`. El primer servei capturarà automàticament la pantalla de l'usuari cada 30 segons amb `scrot`, desant-les organitzades per data. El segon servei aixecarà un servidor web Flask que les serveix a través d'una interfície web premium amb filtres avançats, galeria i visualitzador en pantalla completa. Demostrarem així com serveis injectats en el cicle de boot poden actuar com un sistema de monitoratge complet i silenciós accessible des del navegador.
+
+
+---
+
+**PAS 1: Instal·lar les dependències necessàries**
+
+Necessitem `scrot` (captures de pantalla), `python3` i el mòdul `flask` (servidor web):
+
+```bash
+apt update
+apt install -y scrot python3 python3-flask
+```
+
+> **(📸 Captura: Resultat de l'`apt install` mostrant que `scrot` i `python3-flask` han estat instal·lats correctament o ja estan presents.)**
+
+---
+
+**PAS 2: Crear l'script capturer `pauserra_spy.sh`**
+
+Creem l'script que fa captures cada 30s i les desa organitzades per subcarpetes de data:
+
+```bash
+nano /usr/local/bin/pauserra_spy.sh
+```
+
+Contingut de l'script:
+```bash
+#!/bin/bash
+# pauserra_spy.sh — Agent de vigilància silenciós
+# Captura la pantalla cada 30s i la desa organitzada per data
+
+SCREENSHOT_BASE="/var/log/pauserra_spy"
+DISPLAY_ENV=":0"
+
+while true; do
+    DATE_DIR=$(date +"%Y-%m-%d")
+    TIMESTAMP=$(date +"%H-%M-%S")
+    DIR="$SCREENSHOT_BASE/$DATE_DIR"
+    SCREENSHOT="$DIR/$TIMESTAMP.png"
+
+    # Crear subcarpeta del dia si no existeix
+    mkdir -p "$DIR"
+
+    # Capturem la pantalla de l'usuari gràfic (display :0)
+    DISPLAY=$DISPLAY_ENV scrot "$SCREENSHOT" 2>/dev/null
+
+    sleep 30
+done
+```
+
+Donem permisos d'execució:
+```bash
+chmod +x /usr/local/bin/pauserra_spy.sh
+```
+
+> **(📸 Captura: Resultat de `ls -la /usr/local/bin/pauserra_spy.sh` mostrant els permisos `rwxr-xr-x` i que el propietari és `root`.)**
+
+---
+
+**PAS 3: Executar l'script manualment i verificar captures (Requisit 4)**
+
+Abans de delegar l'execució al sistema, comprovem que l'script funciona correctament:
+
+```bash
+/usr/local/bin/pauserra_spy.sh &
+```
+
+Esperem uns 35 segons i comprovem que s'ha creat la captura:
+```bash
+# Verifiquem que han aparegut captures organitzades per data
+ls -lh /var/log/pauserra_spy/$(date +"%Y-%m-%d")/
+```
+
+Hauries de veure fitxers `HH-MM-SS.png`. Per aturar el procés de prova:
+```bash
+kill %1
+```
+
+> **(📸 Captura 1: El terminal mostrant el procés corrent en segon pla (`[1] PID`) just després d'executar l'script amb `&`.)**
+
+> **(📸 Captura 2: La sortida de `ls -lh /var/log/pauserra_spy/YYYY-MM-DD/` mostrant les captures PNG generades amb la marca de temps com a nom de fitxer.)**
+
+---
+
+**PAS 4: Crear el servidor web Flask `app.py` i la plantilla `index.html`**
+
+Creem el directori del servidor web:
+```bash
+mkdir -p /opt/pauserra-web/templates
+```
+
+Creem el servidor Flask (`/opt/pauserra-web/app.py`) amb l'API REST completa:
+```bash
+nano /opt/pauserra-web/app.py
+```
+
+El servidor exposa els endpoints: `GET /` (dashboard), `GET /api/screenshots` (JSON filtrable per `?date=`, `?from=`, `?to=`, `?search=` i paginat de 20 en 20), `GET /api/dates` (dies amb captures), `GET /api/stats` (total, avui, última captura, espai), i `GET /screenshots/<path>` (serveix els PNG).
+
+Creem la plantilla web premium (`/opt/pauserra-web/templates/index.html`) amb:
+- **Header**: títol, stats en temps real (total captures, última captura fa X segons, espai)
+- **Sidebar**: calendari de dates actives (punts), rang d'hores, toggle de refresc automàtic
+- **Galeria**: grid responsive de thumbnails amb overlay d'hora, hover zoom, click → modal
+- **Modal**: visualitzador fullscreen amb navegació ← → i teclat
+- Paleta: fons `#0a0a0f`, glassmorphism `rgba(255,255,255,0.05)`, accent cian `#00d4ff`
+
+```bash
+nano /opt/pauserra-web/templates/index.html
+```
+
+> **(📸 Captura: El fitxer `app.py` obert a `nano` mostrant els endpoints de l'API, especialment `GET /api/stats` i `GET /api/screenshots`.)**
+
+---
+
+**PAS 5: Crear el target `pauserra.target` (Requisit 1)**
+
+Creem el nostre target personalitzat que dependrà de `graphical.target`:
+
+```bash
+nano /etc/systemd/system/pauserra.target
+```
+
+Contingut:
+```ini
+[Unit]
+Description=Target personalitzat Pau Serra — Dashboard de Vigilància en Temps Real
+Requires=graphical.target
+After=graphical.target
+AllowIsolate=yes
+```
+
+> **(📸 Captura: El fitxer `pauserra.target` obert amb `nano` mostrant el contingut sencer, especialment les línies `Requires=graphical.target` i `After=graphical.target`.)**
+
+---
+
+**PAS 6: Crear el servei `pauserra-spy.service` (Requisits 2+3)**
+
+Creem el `.service` que executarà l'script de captures com a `root`:
+
+```bash
+nano /etc/systemd/system/pauserra-spy.service
+```
+
+Contingut:
+```ini
+[Unit]
+Description=Agent de vigilància silenciós — Pau Serra
+After=graphical.target
+
+[Service]
+Type=simple
+User=root
+Environment=DISPLAY=:0
+ExecStart=/usr/local/bin/pauserra_spy.sh
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=pauserra.target
+```
+
+> **(📸 Captura: El fitxer `pauserra-spy.service` obert amb `nano` mostrant el contingut complet, especialment les línies `User=root` i `WantedBy=pauserra.target`.)**
+
+---
+
+**PAS 7: Crear el servei `pauserra-web.service` (Requisit 2)**
+
+Creem el `.service` que aixecarà el servidor Flask com a `root`:
+
+```bash
+nano /etc/systemd/system/pauserra-web.service
+```
+
+Contingut:
+```ini
+[Unit]
+Description=Servidor web de vigilància — Pau Serra
+After=network.target pauserra.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/python3 /opt/pauserra-web/app.py
+Restart=always
+RestartSec=5
+WorkingDirectory=/opt/pauserra-web
+
+[Install]
+WantedBy=pauserra.target
+```
+
+> **(📸 Captura: El fitxer `pauserra-web.service` obert amb `nano` mostrant el contingut complet, especialment `ExecStart` i `WantedBy=pauserra.target`.)**
+
+---
+
+**PAS 8: Activar i configurar com a target per defecte (Requisit 1)**
+
+Executem les comandes en ordre per registrar els nous fitxers, habilitar els serveis i fer que el nostre target sigui el que carregui per defecte:
+
+```bash
+systemctl daemon-reload
+systemctl enable pauserra-spy.service
+systemctl enable pauserra-web.service
+systemctl set-default pauserra.target
+```
+
+> **(📸 Captura: El terminal mostrant en seqüència els outputs de les quatre comandes, especialment la creació dels symlinks confirmada per `enable` i `set-default`.)**
+
+---
+
+**PAS 9: Reinici i verificació final (Requisits 1+2)**
+
+Reinicia la màquina virtual:
+```bash
+reboot
+```
+
+Un cop el sistema hagi arrencat, obre un terminal i comprova que els dos serveis estan en execució:
+```bash
+systemctl status pauserra-spy.service
+systemctl status pauserra-web.service
+```
+
+Hauries de veure `active (running)` en tots dos. Verifica també quin target és ara el per defecte:
+```bash
+systemctl get-default
+```
+Ha de mostrar `pauserra.target`.
+
+Verifica la API Flask:
+```bash
+curl http://localhost:5000/api/stats
+```
+
+Finalment, obre el navegador a `http://<IP-VM>:5000` i comprova la interfície web.
+
+> **(📸 Captura 1: `systemctl status pauserra-spy.service` mostrant `active (running)` i el PID del procés.)**
+
+> **(📸 Captura 2: `systemctl status pauserra-web.service` mostrant `active (running)`.)**
+
+> **(📸 Captura 3: `systemctl get-default` mostrant `pauserra.target` com a target actiu per defecte.)**
+
+> **(📸 Captura 4: El navegador obert a `http://<IP-VM>:5000` mostrant la interfície web glassmorphism amb les captures a la galeria.)**
+
+---
+
+## Resum de compliment de l'enunciat
+
+| Requisit de la professora | Com es compleix en aquesta activitat |
+|---|---|
+| 1. Crear target propi, fer-lo default i comprovar accés | `pauserra.target` creat al PAS 5, `set-default` al PAS 8, verificat amb `get-default` + `systemctl status` al PAS 9 |
+| 2. Crear servei dintre del target i comprovar que s'inicia al reiniciar | `pauserra-spy.service` i `pauserra-web.service` amb `WantedBy=pauserra.target` als PASSOS 6-7, verificats amb `systemctl status active (running)` al PAS 9 |
+| 3. Modificar el servei per executar script amb permisos root | `User=root` al `.service` (PAS 6) + `chmod +x` a l'script (PAS 2) |
+| 4. Programar script i executar-lo manualment per veure si funciona | Script `pauserra_spy.sh` creat al PAS 2, executat manualment i verificat amb `ls` al **PAS 3** |
 
 
 ---
