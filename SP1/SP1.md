@@ -195,7 +195,12 @@ A simple vista com podem detectar-ho de base? Si fem un _reboot_, l'acció en l'
 
 * 3.8- Creem nou target personalitzat
 
-ACTIVITAT 4: Agent Silenciós de Vigilància amb Captura de Pantalla i Bot de Telegram
+> ⚠️ **TASCA AVALUABLE — Activitat de deures** ⚠️
+
+# 🏠 TASCA AVALUABLE 4: Agent Silenciós de Vigilància amb Captura de Pantalla i Bot de Telegram
+
+> [!IMPORTANT]
+> Aquesta activitat **no s'ha fet a classe**: s'ha realitzat de forma autònoma com a tasca de deures avaluable. Les activitats 1, 2 i 3 corresponen al treball fet durant les sessions presencials.
 
 **Objectiu:** Crear un `target` propi que s'activi a l'arrencada del sistema gràfic i que executi un servei amb permisos de `root`. El servei capturarà automàticament la pantalla de l'usuari cada 30 segons amb `scrot` i enviarà les captures al nostre canal privat de Telegram mitjançant la seva API. Demostrarem així com un servei injectat en el cicle de boot pot actuar com un agent de monitoratge complet i silenciós.
 
