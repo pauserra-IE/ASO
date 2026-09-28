@@ -212,7 +212,7 @@ apt update
 apt install -y scrot python3 python3-flask
 ```
 
-> **(📸 Captura: Resultat de l'`apt install` mostrant que `scrot` i `python3-flask` han estat instal·lats correctament o ja estan presents.)**
+<img width="778" height="176" alt="image" src="https://github.com/user-attachments/assets/08b3dfa5-cb50-4d86-9d9f-b5b6d4fea5b0" />
 
 ---
 
@@ -254,7 +254,7 @@ Donem permisos d'execució:
 chmod +x /usr/local/bin/pauserra_spy.sh
 ```
 
-> **(📸 Captura: Resultat de `ls -la /usr/local/bin/pauserra_spy.sh` mostrant els permisos `rwxr-xr-x` i que el propietari és `root`.)**
+<img width="660" height="78" alt="image" src="https://github.com/user-attachments/assets/1256df57-cb08-4113-94fe-90a881ae5dfc" />
 
 ---
 
@@ -272,14 +272,13 @@ Esperem uns 35 segons i comprovem que s'ha creat la captura:
 ls -lh /var/log/pauserra_spy/$(date +"%Y-%m-%d")/
 ```
 
-Hauries de veure fitxers `HH-MM-SS.png`. Per aturar el procés de prova:
+S'haurien de veure fitxers `HH-MM-SS.png`. Per aturar el procés de prova:
 ```bash
 kill %1
 ```
 
-> **(📸 Captura 1: El terminal mostrant el procés corrent en segon pla (`[1] PID`) just després d'executar l'script amb `&`.)**
+<img width="746" height="130" alt="image" src="https://github.com/user-attachments/assets/f26a572e-da70-4fef-bfda-49cc42e5fa0d" />
 
-> **(📸 Captura 2: La sortida de `ls -lh /var/log/pauserra_spy/YYYY-MM-DD/` mostrant les captures PNG generades amb la marca de temps com a nom de fitxer.)**
 
 ---
 
@@ -295,6 +294,12 @@ Creem el servidor Flask (`/opt/pauserra-web/app.py`) amb l'API REST completa:
 nano /opt/pauserra-web/app.py
 ```
 
+
+---
+<img width="692" height="1023" alt="image" src="https://github.com/user-attachments/assets/9d57a491-be5a-4c3f-8099-56234e0867ea" />
+
+---
+
 El servidor exposa els endpoints: `GET /` (dashboard), `GET /api/screenshots` (JSON filtrable per `?date=`, `?from=`, `?to=`, `?search=` i paginat de 20 en 20), `GET /api/dates` (dies amb captures), `GET /api/stats` (total, avui, última captura, espai), i `GET /screenshots/<path>` (serveix els PNG).
 
 Creem la plantilla web premium (`/opt/pauserra-web/templates/index.html`) amb:
@@ -308,7 +313,7 @@ Creem la plantilla web premium (`/opt/pauserra-web/templates/index.html`) amb:
 nano /opt/pauserra-web/templates/index.html
 ```
 
-> **(📸 Captura: El fitxer `app.py` obert a `nano` mostrant els endpoints de l'API, especialment `GET /api/stats` i `GET /api/screenshots`.)**
+<img width="893" height="939" alt="image" src="https://github.com/user-attachments/assets/c1835e2e-0489-4ac5-ad69-718bda0f7867" />
 
 ---
 
@@ -329,7 +334,7 @@ After=graphical.target
 AllowIsolate=yes
 ```
 
-> **(📸 Captura: El fitxer `pauserra.target` obert amb `nano` mostrant el contingut sencer, especialment les línies `Requires=graphical.target` i `After=graphical.target`.)**
+<img width="700" height="204" alt="image" src="https://github.com/user-attachments/assets/0fdd3b6d-0fab-4d3d-af27-e2245282d604" />
 
 ---
 
@@ -359,7 +364,7 @@ RestartSec=10
 WantedBy=pauserra.target
 ```
 
-> **(📸 Captura: El fitxer `pauserra-spy.service` obert amb `nano` mostrant el contingut complet, especialment les línies `User=root` i `WantedBy=pauserra.target`.)**
+<img width="700" height="397" alt="image" src="https://github.com/user-attachments/assets/bda3e073-c54f-43f1-acf4-5e40405359ad" />
 
 ---
 
@@ -389,7 +394,7 @@ WorkingDirectory=/opt/pauserra-web
 WantedBy=pauserra.target
 ```
 
-> **(📸 Captura: El fitxer `pauserra-web.service` obert amb `nano` mostrant el contingut complet, especialment `ExecStart` i `WantedBy=pauserra.target`.)**
+<img width="655" height="395" alt="image" src="https://github.com/user-attachments/assets/963aaa89-d84e-480c-ab0b-afb64181fe83" />
 
 ---
 
