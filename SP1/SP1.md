@@ -200,8 +200,31 @@ A simple vista com podem detectar-ho de base? Si fem un _reboot_, l'acció en l'
 
 **Objectiu escollit:** Crear un `target` propi que s'activi a l'arrencada del sistema gràfic i que executi dos serveis amb permisos de `root`. El primer servei capturarà automàticament la pantalla de l'usuari cada 30 segons amb `scrot`, desant-les organitzades per data. El segon servei aixecarà un servidor web Flask que les serveix a través d'una interfície web premium amb filtres avançats, galeria i visualitzador en pantalla completa. Demostrarem així com serveis injectats en el cicle de boot poden actuar com un sistema de monitoratge complet i silenciós accessible des del navegador.
 
-
 ---
+
+**PAS 0: Preparar l'entorn **
+
+L'eina `scrot` necessita funcionar sota un entorn X11 i no és compatible amb Wayland. A més, per disseny, el sistema de seguretat de Wayland bloqueja de forma estricta qualsevol intent silenciós de captura de pantalla des de processos en segon pla justament per prevenir "spyware" com el nostre. 
+
+Com que Ubuntu 26.04 ha eliminat per complet el suport per a sessions de GNOME en X11 (és 100% Wayland), la solució necessària per poder realitzar aquesta prova de concepte és instal·lar un escriptori alternatiu com XFCE, que sí que manté el suport per X11.
+
+Instal·lem l'entorn XFCE:
+```bash
+sudo apt update
+sudo apt install -y xfce4
+```
+
+Un cop instal·lat, **reiniciem el sistema**. A la pantalla de login (després de clicar al nostre nom d'usuari però abans de posar la contrasenya), anirem a la icona de l'engranatge inferior dret i seleccionarem la sessió **Xfce Session**.
+
+Per verificar que efectivament hem iniciat sessió sota un entorn X11, obrirem un terminal i executarem:
+```bash
+echo $XDG_SESSION_TYPE
+```
+
+<img width="461" height="44" alt="2026-09-28_19-51" src="https://github.com/user-attachments/assets/5a2b4b18-b0cb-4dbf-a00e-ca7c563731fc" />
+
+
+
 
 **PAS 1: Instal·lar les dependències necessàries**
 
@@ -213,6 +236,7 @@ apt install -y scrot python3 python3-flask
 ```
 
 <img width="778" height="176" alt="image" src="https://github.com/user-attachments/assets/08b3dfa5-cb50-4d86-9d9f-b5b6d4fea5b0" />
+
 
 ---
 
@@ -409,7 +433,7 @@ systemctl enable pauserra-web.service
 systemctl set-default pauserra.target
 ```
 
-> **(📸 Captura: El terminal mostrant en seqüència els outputs de les quatre comandes, especialment la creació dels symlinks confirmada per `enable` i `set-default`.)**
+<img width="505" height="83" alt="2026-09-28_20-21" src="https://github.com/user-attachments/assets/e662dd46-b1fd-4442-80d4-c3c0f3b44e9c" />
 
 ---
 
@@ -439,14 +463,13 @@ curl http://localhost:5000/api/stats
 
 Finalment, obre el navegador a `http://<IP-VM>:5000` i comprova la interfície web.
 
-> **(📸 Captura 1: `systemctl status pauserra-spy.service` mostrant `active (running)` i el PID del procés.)**
 
-> **(📸 Captura 2: `systemctl status pauserra-web.service` mostrant `active (running)`.)**
-
-> **(📸 Captura 3: `systemctl get-default` mostrant `pauserra.target` com a target actiu per defecte.)**
+<img width="437" height="47" alt="2026-09-28_20-22" src="https://github.com/user-attachments/assets/d96e05fa-6950-4eb4-a373-4c229191305d" />
 
 > **(📸 Captura 4: El navegador obert a `http://<IP-VM>:5000` mostrant la interfície web glassmorphism amb les captures a la galeria.)**
-
+Captura 1: Sense captures
+Captura 2: 3 captures
+Captura 3: 2 captures despres de aplicar filtre
 ---
 
 ## Resum de compliment de l'enunciat
