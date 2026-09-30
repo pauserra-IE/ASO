@@ -188,7 +188,7 @@ A simple vista com podem detectar-ho de base? Si fem un _reboot_, l'acció en l'
 
 
 <a id="practica-avaluable"></a>
-# 🏠 TASCA AVALUABLE : Web Dashboard de Vigilància en Temps Real
+# 🏠 TASCA AVALUABLE : Web Dashboard de Vigilància
 
 
 1. **Crear target propi, fer-lo default target i comprovar que accediu amb el vostre target**
