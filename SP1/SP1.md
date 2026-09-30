@@ -6,24 +6,21 @@ title: "SISTEMES D'INICI"
 
 ## Índex
 
-**1- SystemV vs Upstart vs Systemd**
-* 1.1- Runlevels o Targets?
-* 1.2- Quin el nostre SO?
-  
-
-**2- SystemV**
-* 2.1- Directoris
-* 2.2- Procés arrencada
-
-**3- Systemd**
-* 3.1- Directoris
-* 3.2- systemctl
-* 3.3- dependències
-* 3.4- Modificar target provisional
-* 3.5- Modificar target definitiu
-* 3.6- Afegir/treure serveis target
-* 3.7- Creem nou servei
-* 3.8- Creem nou target personalitzat
+- [1- SystemV vs Upstart vs Systemd](#1--systemv-vs-upstart-vs-systemd)
+  - [1.1- Runlevels o Targets?](#11--runlevels-o-targets)
+  - [1.2- Quin és el nostre SO?](#12--quin-és-el-nostre-so)
+- [2- SystemV](#2--systemv)
+  - [2.1- Directoris](#21--directoris)
+  - [2.2- Procés arrencada](#22--procés-arrencada)
+- [3- Systemd](#3--systemd)
+  - [3.1- Directoris](#31--directoris)
+  - [3.2- systemctl](#32--systemctl)
+  - [3.3- dependències](#33--dependències)
+  - [3.4- Modificar target provisional](#34--modificar-target-provisional)
+  - [3.5- Modificar target definitiu](#35--modificar-target-definitiu)
+  - [3.6- Afegir/treure serveis target](#36--afegirtreure-serveis-target)
+  - [3.7- Creem nou servei](#37--creem-nou-servei)
+- **[PRÀCTICA AVALUABLE](#practica-avaluable)**
 ---
 
 ## Conceptes
@@ -55,15 +52,15 @@ title: "SISTEMES D'INICI"
 ---
 
 
-**1- SystemV vs Upstart vs Systemd**
-* 1.1- Runlevels o Targets?
+### 1- SystemV vs Upstart vs Systemd
+#### 1.1- Runlevels o Targets?
 
 ACTIVITAT 1
 Com sabem a quin nivell d'execució estem actualment?
 Amb la comanda `runlevel` (exemple en Ubuntu 24.04):
 <img width="304" height="54" alt="image" src="https://github.com/user-attachments/assets/a2c038e5-88ab-4345-a83a-43ba62589b87" />
 
-* 1.2- Quin és el nostre SO?
+#### 1.2- Quin és el nostre SO?
 
 Mitjançant la comanda `man init` o veient cap a on apunta l'enllaç simbòlic de `/sbin/init`:
 
@@ -72,11 +69,11 @@ readlink -v /sbin/init
 <img width="500" height="39" alt="image" src="https://github.com/user-attachments/assets/59574d16-7e13-4c72-bc25-96d6ad7b7ff3" />
 
 
-**2- SystemV**
+### 2- SystemV
 
-* 2.1- Directoris
+#### 2.1- Directoris
 
-El directori `//init.d/`
+El directori `/etc/init.d/`
 Aquí hi trobem tots els scripts d'engegada del sistema (els dimonis), com ara `cron`.
 Tot el que està gestionat mitjançant l'estàndard SystemV s'allotja a `init.d`. 
 
@@ -86,21 +83,19 @@ Tot el que està gestionat mitjançant l'estàndard SystemV s'allotja a `init.d`
 
 
 Dintre de `/etc/` també hi trobem les carpetes de `rcX.d` (runlevels):
-
----
 <img width="413" height="291" alt="image" src="https://github.com/user-attachments/assets/9485aa78-e523-4106-b38a-acbf6f8ab45f" />
 
 <img width="825" height="127" alt="image" src="https://github.com/user-attachments/assets/4514cd8c-89c7-4a11-9958-03116e35c6f7" />
 
-* 2.2- Procés arrencada
+#### 2.2- Procés arrencada
 
 Comanda `init`
 Accionem la comanda `init` juntament amb el nivell d'execució desitjat per canviar l'estat del servidor, per ex: `init 6` fa un reboot.
 
 
-**3- Systemd**
+### 3- Systemd
 
-* 3.1- Directoris
+#### 3.1- Directoris
 
 El directori per defecte on s'instal·la la configuració base de `systemd` és:
 `/lib/systemd/system`
@@ -110,7 +105,7 @@ El directori per defecte on s'instal·la la configuració base de `systemd` és:
 Directori `/etc/systemd`
 Aquest l'utilitzarem sempre que vulguem modificar alguna configuració. En cas de duplicitat sempre preval la configuració editada d'`/etc/` per sobre de `/lib/`.
 
-* 3.2- systemctl
+#### 3.2- systemctl
 
 Per filtrar per tipus d'unitats:
 Per exemple, si llistem i filtrem els tipus `target` que gestiona `systemd`:
@@ -122,14 +117,14 @@ Per veure l'estat en el qual arrenca el sistema per defecte `systemctl get-defau
 COMANDA systemd-analyze (mesura el temps pres al primer arrencament)
 <img width="762" height="61" alt="image" src="https://github.com/user-attachments/assets/bd12ead6-4174-4b2b-b719-647e93d06dfd" />
 
-* 3.3- dependències
+#### 3.3- dependències
 
 Aquesta comanda, `systemctl list-dependencies`, ens diu concretament el `graphical.target` quines dependències té requerides en actiu perquè s'aixequi:
 <img width="897" height="190" alt="image" src="https://github.com/user-attachments/assets/0ba425c5-644a-43ee-b89b-3fa2761eecbf" />
 
 <img width="870" height="860" alt="image" src="https://github.com/user-attachments/assets/67db002f-93df-4eb7-98b5-80c1492d80f7" />
 
-* 3.4- Modificar target provisional
+#### 3.4- Modificar target provisional
 
 L'`isolate` és altament semblant al de `init`:
 <img width="649" height="26" alt="image" src="https://github.com/user-attachments/assets/1478d00b-6ef0-48dd-92f7-3f8a86645b26" />
@@ -138,7 +133,7 @@ Per canviar d'estat del sistema temporalment a mode manteniment utilitzarem:
 `systemctl isolate rescue.target`
 <img width="642" height="20" alt="image" src="https://github.com/user-attachments/assets/d7c86410-12e9-4e3a-a3e0-13224246bfb5" />
 
-* 3.5- Modificar target definitiu
+#### 3.5- Modificar target definitiu
 
 Si busquem un target per nom, per exemple l'enllaç original de `default.target`, normalment apunta directament a `graphical.target` (l'escriptori per defecte):
 <img width="838" height="288" alt="image" src="https://github.com/user-attachments/assets/a5780c8a-d073-44cd-b33d-91cc1f03f456" />
@@ -153,7 +148,7 @@ A la imatge següent l'entorn per defecte ja no serà el gràfic, sinó que ser�
 Podem comprovar-ho en fer _reboot_, ens quedarem dins una prompt en `rescue mode` a l'espera de resoldre'l o cancel·lar la reparació (revertim els canvis després per reparar-ho):
 <img width="733" height="162" alt="image" src="https://github.com/user-attachments/assets/5c437560-7682-4232-82a6-ee3565c2803e" />
 
-* 3.6- Afegir/treure serveis target
+#### 3.6- Afegir/treure serveis target
 
 ACTIVITAT 2 SSH
 
@@ -163,7 +158,7 @@ El primer que cal verificar i en cas necessari instal·lar és el programari del
 El darrer pas rellevant és afegir o habilitar manualment el lligam de dependències gràcies a `--now` en actiu com a unitat.
 <img width="859" height="359" alt="image" src="https://github.com/user-attachments/assets/e32bc40d-2c8e-4633-bd1d-d4e9c46aded3" />
 
-* 3.7- Creem nou servei
+#### 3.7- Creem nou servei
 
 ACTIVITAT 3:
 Crear un servei propi amb l'extensió `.service`.
@@ -192,6 +187,7 @@ A simple vista com podem detectar-ho de base? Si fem un _reboot_, l'acció en l'
 
 
 
+<a id="practica-avaluable"></a>
 # 🏠 TASCA AVALUABLE : Web Dashboard de Vigilància en Temps Real
 
 
@@ -474,6 +470,8 @@ Exemple 2: Es mostren totes les captures
 Cas 3: Es mostren nomes 2 captures despres d'aplicar filtre de temps
 <img width="946" height="699" alt="2026-09-28_20-28" src="https://github.com/user-attachments/assets/786fd563-5683-41cc-ae3c-a4de1fb849e8" />
 
+
+
 ---
 
 ## Objectius Completats
@@ -484,6 +482,7 @@ Cas 3: Es mostren nomes 2 captures despres d'aplicar filtre de temps
 | 2. Crear servei dintre del target i comprovar que s'inicia al reiniciar | `pauserra-spy.service` i `pauserra-web.service` amb `WantedBy=pauserra.target` als PASSOS 6-7, verificats amb `systemctl status active (running)` al PAS 9 |
 | 3. Modificar el servei per executar script amb permisos root | `User=root` al `.service` (PAS 6) + `chmod +x` a l'script (PAS 2) |
 | 4. Programar script i executar-lo manualment per veure si funciona | Script `pauserra_spy.sh` creat al PAS 2, executat manualment i verificat amb `ls` al **PAS 3** |
+
 
 
 ---
