@@ -477,6 +477,7 @@ Cas 3: Es mostren nomes 2 captures despres d'aplicar filtre de temps
 ---
 
 ## Objectius Completats
+
 | Requisit | Com es compleix en aquesta activitat |
 |---|---|
 | 1. Crear target propi, fer-lo default i comprovar accés | `pauserra.target` creat al PAS 5, `set-default` al PAS 8, verificat amb `get-default` + `systemctl status` al PAS 9 |
