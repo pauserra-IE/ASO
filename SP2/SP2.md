@@ -82,8 +82,6 @@ A Windows, cada servei té assignada una política d'arrencada:
    * Un executable ordinari o un script `.ps1` no conté les trucades a la Win32 API (`ServiceMain`) necessàries per comunicar-se amb el SCM. Si intentéssim registrar directament `powershell.exe script.ps1` com a servei amb `sc.exe`, el SCM donaria l'error de temps d'espera esgotat (*Error 1053*).
    * **NSSM** actua com un encapsulador (*service wrapper*) transparent: gestiona el protocol de comunicació amb Windows, aixeca el nostre script PowerShell en segon pla amb el paràmetre `-ExecutionPolicy Bypass`, redirigeix logs d'error/sortida i permet reiniciar automàticament el servei en cas de caiguda.
 
-> **(📸 Captura 1: Obertura de la consola de PowerShell amb permisos d'Administrador. A la barra de títol de la finestra ha de figurar clarament `Administrador: Windows PowerShell` i la ruta inicial `PS C:\Windows\system32>`.)**
-
 ---
 
 ## 2- Gestió i Optimització de Serveis del Sistema (Requisit PDF)
@@ -120,7 +118,7 @@ Set-Service -Name "SysMain" -StartupType Disabled
 Get-Service -Name "SysMain" | Select-Object Name, DisplayName, Status, StartType
 ```
 
-> **(📸 Captura 2: Consola de PowerShell com a Administrador mostrant la sortida de les comandes anteriors, on s'observa el canvi d'estat de `Running / Automatic` a `Stopped / Disabled`.)**
+<img width="750" height="423" alt="image" src="https://github.com/user-attachments/assets/22cee562-b99f-4ef9-9523-6867b43d8d6b" />
 
 ---
 
@@ -155,14 +153,17 @@ New-Item -ItemType Directory -Force -Path "C:\PauSerra-Sentinel\logs"
 New-Item -ItemType Directory -Force -Path "C:\PauSerra-Sentinel\bin"
 ```
 
-Copia l'executable **`nssm.exe`** (versió de 64 bits de la carpeta `nssm-2.24/win64`) dins de la carpeta `C:\PauSerra-Sentinel\bin\` i comprova la seva versió:
+<img width="648" height="494" alt="image" src="https://github.com/user-attachments/assets/ea4f53e2-779e-4e70-be7c-5b1c10dfd64d" />
+
+
+Copiem l'executable **`nssm.exe`** (versió de 64 bits de la carpeta `nssm-2.24/win64`) dins de la carpeta `C:\PauSerra-Sentinel\bin\` i comprova la seva versió:
 
 ```powershell
 # Verifiquem l'executable de nssm
 & "C:\PauSerra-Sentinel\bin\nssm.exe" version
 ```
 
-> **(📸 Captura 3: Terminal de PowerShell mostrant la creació dels directoris a `C:\PauSerra-Sentinel` i l'execució satisfactòria de `nssm.exe version` retornant la versió 2.24.)**
+<img width="489" height="86" alt="image" src="https://github.com/user-attachments/assets/baaca53f-1027-4511-ace5-054878de235c" />
 
 ---
 
@@ -395,7 +396,6 @@ Add-Type -AssemblyName System.Windows.Forms
 Write-Log "Sentinel Server aturat."
 ```
 
-> **(📸 Captura 4: L'script `SentinelServer.ps1` obert a l'editor de codi de Windows, mostrant la declaració del listener HTTP i les consultes CIM de processos i telemetria.)**
 
 ---
 
@@ -416,7 +416,6 @@ La interfície inclou:
 * **Bàner d'Interacció amb l'Escriptori**: Botó que dispara una crida AJAX cap a `/api/alert` per llançar la notificació emergent nativa a l'escriptori.
 * **Auto-refresc dinàmic**: Consulta l'API de telemetria cada 3 segons de forma transparent.
 
-> **(📸 Captura 5: Comprovació de l'existència i mida del fitxer `C:\PauSerra-Sentinel\web\index.html` mitjançant la comanda `Get-Item C:\PauSerra-Sentinel\web\index.html`.)**
 
 ---
 
@@ -432,23 +431,29 @@ powershell.exe -ExecutionPolicy Bypass -NoProfile -File "C:\PauSerra-Sentinel\Se
 ```
 
 La consola mostrarà els missatges d'inici:
-```text
-[2026-10-21 15:30:00] Iniciant PauSerra Sentinel Server al port 8080...
-[2026-10-21 15:30:00] HttpListener engegat escoltant a http://+:8080/
-```
+
+<img width="899" height="95" alt="image" src="https://github.com/user-attachments/assets/6e035783-3340-4c65-b96b-bd66679d2246" />
+
 
 Mentre s'executa, obrim el navegador a:
 ```text
 http://localhost:8080
 ```
-Verifiquem que el panell carrega les dades correctament. En una altra consola de PowerShell podem comprovar l'API de dades:
+Verifiquem que el panell carrega les dades correctament. 
+
+<img width="937" height="924" alt="image" src="https://github.com/user-attachments/assets/4f503485-b841-48d6-a1c0-c3731da2a259" />
+
+
+
+
+
+En una altra consola de PowerShell podem comprovar l'API de dades:
 ```powershell
 Invoke-RestMethod -Uri "http://localhost:8080/api/telemetry"
 ```
+<img width="828" height="447" alt="image" src="https://github.com/user-attachments/assets/bae4b3d3-d912-42c2-aa36-75a0330d8dc5" />
 
-Un cop verificat, aturem el procés de prova prement `Ctrl + C`.
 
-> **(📸 Captura 6: Terminal de PowerShell mostrant l'arrencada manual de `SentinelServer.ps1` i, en segon pla, la finestra del navegador mostrant la interfície web responent a `http://localhost:8080`.)**
 
 ---
 
@@ -488,7 +493,7 @@ Configurem els camps següents:
   -ExecutionPolicy Bypass -NoProfile -File "C:\PauSerra-Sentinel\SentinelServer.ps1"
   ```
 
-> **(📸 Captura 7: Finestra del 'NSSM service installer' a la pestanya 'Application', amb els camps Path, Startup directory i Arguments correctament introduïts.)**
+<img width="466" height="298" alt="image" src="https://github.com/user-attachments/assets/32619c6e-035d-43dd-9e28-5cc1e2c296db" />
 
 ---
 
@@ -500,6 +505,8 @@ A la pestanya **Details**:
 * **Startup type**: `Automatic`
 
 ---
+<img width="429" height="232" alt="image" src="https://github.com/user-attachments/assets/ab42cfa7-ac0d-46f1-ac41-1aea8d059d79" />
+
 
 ### 4.3- Configuració de "Allow service to interact with desktop" (Pestanya "Log on")
 
@@ -511,14 +518,13 @@ Segons la indicació literal del PDF:
 3. **Marquem la casella: `Allow service to interact with desktop`**.
 4. Cliquem sobre el botó **Install service**.
 
+<img width="431" height="229" alt="image" src="https://github.com/user-attachments/assets/6f0b7be6-be50-4a0d-a86e-93f0432d5d1d" />
+
 Apareixerà el quadre de diàleg confirmant:
 ```text
 Service "PauSerraSentinel" installed successfully!
 ```
-
-> **(📸 Captura 8: Pestanya 'Log on' del NSSM amb 'Local System account' marcat i la casella 'Allow service to interact with desktop' seleccionada.)**
-
-> **(📸 Captura 9: Diàleg emergent de confirmació de NSSM: 'Service "PauSerraSentinel" installed successfully!'.)**
+<img width="331" height="143" alt="image" src="https://github.com/user-attachments/assets/33e5bb81-88dd-4747-9c3b-16aa30b544a1" />
 
 ---
 
@@ -562,7 +568,7 @@ Set-Service -Name "SysMain" -StartupType Disabled
 Get-Service -Name "SysMain" | Format-List Name, DisplayName, Status, StartType
 ```
 
-> **(📸 Captura 10: Consola de PowerShell com a Administrador mostrant la sortida de `Get-Service -Name "SysMain"` amb l'estat `Status: Stopped` i el tipus d'inici `StartType: Disabled`.)**
+<img width="720" height="165" alt="image" src="https://github.com/user-attachments/assets/b2af9b59-2aba-4f7e-941a-29a524c1392c" />
 
 ---
 
@@ -581,18 +587,13 @@ Get-Service -Name "PauSerraSentinel" | Select-Object Name, DisplayName, Status, 
 & "C:\PauSerra-Sentinel\bin\nssm.exe" status PauSerraSentinel
 ```
 
-La consola retornarà:
-```text
-Status   : Running
-StartType: Automatic
-SERVICE_RUNNING
-```
+<img width="798" height="185" alt="image" src="https://github.com/user-attachments/assets/6867d3d0-6419-41ac-9d90-f6b2914aee31" />
+
 
 Obrim també la consola oficial de serveis de Windows (`Win + R` -> `services.msc`) per verificar gràficament que el servei està en execució amb inici automàtic.
 
-> **(📸 Captura 11: Terminal de PowerShell com a Administrador mostrant `Get-Service PauSerraSentinel` amb l'estat `Running`.)**
+<img width="928" height="377" alt="image" src="https://github.com/user-attachments/assets/72893fb5-b1ac-4407-a536-2514be67e5dc" />
 
-> **(📸 Captura 12: Finestra de la consola de serveis de Windows (`services.msc`), mostrant a la llista el servei `PauSerra Sentinel` amb l'estat 'En ejecución' i Tipus d'inici 'Automàtic'.)**
 
 ---
 
@@ -607,12 +608,14 @@ Restart-Computer -Force
 ```
 
 Un cop reiniciat l'equip:
-1. Sense necessitat d'iniciar sessió d'usuari (o iniciant sessió habitualment), obrim el navegador web des de la màquina o des d'un altre equip de la xarxa:
+1. Obrim el navegador web des de la màquina o des d'un altre equip de la xarxa:
    ```text
    http://localhost:8080
    # o bé:
    http://<IP-DE-LA-MAQUINA>:8080
    ```
+   <img width="937" height="827" alt="image" src="https://github.com/user-attachments/assets/ceaf8786-1230-4d02-808a-e0ec5f031927" />
+
 2. Des de PowerShell verifiquem l'estat del servei:
    ```powershell
    Get-Service -Name "PauSerraSentinel"
@@ -621,7 +624,7 @@ Un cop reiniciat l'equip:
 
 El servei s'ha iniciat sol a la Sessió 0 immediatament en arrencar Windows.
 
-> **(📸 Captura 13: Terminal de PowerShell just després de reiniciar el sistema, confirmant que `PauSerraSentinel` està en estat `Running` de forma 100% autònoma.)**
+<img width="531" height="209" alt="image" src="https://github.com/user-attachments/assets/5a799b87-fb6a-49b3-ba4c-4bc55b983fb0" />
 
 ---
 
@@ -636,25 +639,13 @@ Obrim `http://localhost:8080` a Microsoft Edge o Chrome:
 * **Connexions de Xarxa**: Taula de connexions TCP locals i remotes actives.
 * **Esdeveniments**: Històric en viu d'alertes del sistema operatiu.
 
-> **(📸 Captura 14: Vista panoràmica del navegador web mostrant el Dashboard complet de PauSerra Sentinel en ple funcionament amb dades reals del sistema Windows.)**
+<img width="951" height="844" alt="image" src="https://github.com/user-attachments/assets/a3144d16-326a-4e86-958e-80f46bb38cf2" />
+
+
 
 ---
 
-### 8.2- Verificació d'Interacció amb l'Escriptori (*Allow service to interact with desktop*)
 
-Per demostrar de manera indiscutible que la casella de NSSM està operativa:
-1. Al navegador web, fem clic sobre el botó taronja superior **"📢 Alerta a l'Escriptori"**.
-2. A l'instant, a sobre de la pantalla de l'usuari gràfic de Windows apareixerà una finestra emergent nativa de diàleg (`MessageBox`):
-   ```text
-   🚨 ALERTA DEL SERVEI PAUSERRA SENTINEL
-   Demostració de la funcionalitat NSSM 'Allow service to interact with desktop'.
-   El servei s'executa en segon pla i pot interactuar amb la pantalla de l'usuari interactiu!
-   ```
-3. Aquesta prova valida empíricament la configuració del servei a la Sessió 0 interactuant amb la Sessió d'Escriptori de l'usuari.
-
-> **(📸 Captura 15: L'escriptori de Windows mostrant la finestra del navegador web a l'esquerra i la finestra de diàleg d'alerta emergent de Windows apareguda al centre de la pantalla.)**
-
----
 
 ## Resum de Compliment dels Requisits de l'Enunciat
 
