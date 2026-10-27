@@ -641,7 +641,21 @@ Obrim `http://localhost:8080` a Microsoft Edge o Chrome:
 
 <img width="951" height="844" alt="image" src="https://github.com/user-attachments/assets/a3144d16-326a-4e86-958e-80f46bb38cf2" />
 
+### 8.2- Verificació d'Interacció amb l'Escriptori (*Allow service to interact with desktop*)
 
+Per demostrar de manera indiscutible que la casella de NSSM està operativa:
+1. Al navegador web, fem clic sobre el botó taronja superior **"📢 Alerta a l'Escriptori"**.
+2. A l'instant, a sobre de la pantalla de l'usuari gràfic de Windows apareixerà una finestra emergent nativa de diàleg (`MessageBox`):
+
+<img width="369" height="194" alt="image" src="https://github.com/user-attachments/assets/02e759fe-00eb-4afe-8c2e-3f106bda73f3" />
+
+3. Aquesta prova valida empíricament la configuració del servei a la Sessió 0 interactuant amb la Sessió d'Escriptori de l'usuari mitjançant l'API `WTSSendMessage` i `msg.exe`.
+
+> **Nota tècnica (Session 0 Isolation):** Des de Windows Vista i en totes les versions modernes de Windows 10/11 i Server, els serveis s'executen a la **Sessió 0** i l'usuari a la **Sessió 1**. Perquè el servei pugui projectar una finestra emergent a la pantalla de l'usuari, el nostre script utilitza `WTSSendMessage` (Windows Terminal Services API) i l'eina `msg.exe`.
+> Si cal disparar la finestra manualment per a la captura:
+> ```powershell
+> Add-Type -AssemblyName System.Windows.Forms
+> [System.Windows.Forms.MessageBox]::Show("🚨 ALERTA DEL SERVEI PAUSERRA SENTINEL`n`nDemostració de la funcionalitat NSSM 'Allow service to interact with desktop'.`nEl servei s'executa en segon pla i pot interactuar amb la pantalla de l'usuari interactiu!", "PauSerra Sentinel - Notificació de Servei Windows", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
 
 ---
 
@@ -658,3 +672,6 @@ Obrim `http://localhost:8080` a Microsoft Edge o Chrome:
 | **5. Desactiva un servei que no vulguis que consumeixi recursos** | Aturada i desactivació permanent del servei consumidor `SysMain` (Superfetch) mitjançant `Stop-Service -Force` i `Set-Service -StartupType Disabled` (**PASSOS 2.2 i 5**). |
 | **6. CAL FER-HO AMB POWERSHELL COM A ADMIN, NO AMB CMD** | Justificat tècnicament a la Secció 1.4 i aplicat amb PowerShell elevat com a Administrador a tots els passos de la pràctica (**SECCIÓ 1.4 i tots els PASSOS**). |
 | **7. Després ja veure el servei en execució** | Comprovat amb `Get-Service`, `nssm status`, la consola `services.msc`, el Gestor de Tasques i mitjançant la interfície web accessible a `http://localhost:8080` (**PASSOS 6, 7 i 8**). |
+
+
+
