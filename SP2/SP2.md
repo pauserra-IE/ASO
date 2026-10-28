@@ -651,11 +651,6 @@ Per demostrar de manera indiscutible que la casella de NSSM està operativa:
 
 3. Aquesta prova valida empíricament la configuració del servei a la Sessió 0 interactuant amb la Sessió d'Escriptori de l'usuari mitjançant l'API `WTSSendMessage` i `msg.exe`.
 
-> **Nota tècnica (Session 0 Isolation):** Des de Windows Vista i en totes les versions modernes de Windows 10/11 i Server, els serveis s'executen a la **Sessió 0** i l'usuari a la **Sessió 1**. Perquè el servei pugui projectar una finestra emergent a la pantalla de l'usuari, el nostre script utilitza `WTSSendMessage` (Windows Terminal Services API) i l'eina `msg.exe`.
-> Si cal disparar la finestra manualment per a la captura:
-> ```powershell
-> Add-Type -AssemblyName System.Windows.Forms
-> [System.Windows.Forms.MessageBox]::Show("🚨 ALERTA DEL SERVEI PAUSERRA SENTINEL`n`nDemostració de la funcionalitat NSSM 'Allow service to interact with desktop'.`nEl servei s'executa en segon pla i pot interactuar amb la pantalla de l'usuari interactiu!", "PauSerra Sentinel - Notificació de Servei Windows", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
 
 ---
 
